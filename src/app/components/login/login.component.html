@@ -1,0 +1,68 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo">🎂</div>
+      <h1>Calendario de Cumpleaños</h1>
+      <p>Hotel HB - Sistema de Gestión</p>
+    </div>
+
+    <form class="login-form" (ngSubmit)="onSubmit($event)">
+      <div class="form-group">
+        <label for="username">Usuario</label>
+        <div class="input-wrapper">
+          <span class="input-icon">👤</span>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            [(ngModel)]="username"
+            placeholder="Ingresa tu usuario"
+            autocomplete="username"
+            required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔒</span>
+          <input
+            [type]="mostrarPassword ? 'text' : 'password'"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="Ingresa tu contraseña"
+            autocomplete="current-password"
+            required>
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePassword()">
+            {{ mostrarPassword ? '👁️' : '👁️‍🗨️' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        <span class="error-icon">⚠️</span>
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-login">
+        Iniciar Sesión
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p class="info-text">💡 Usuarios disponibles:</p>
+      <div class="usuarios-lista">
+        <span class="usuario-badge">admin</span>
+        <span class="usuario-badge">karina</span>
+        <span class="usuario-badge">elisa</span>
+        <span class="usuario-badge">cesia</span>
+        <span class="usuario-badge">restaurante</span>
+        <span class="usuario-badge">recepcion</span>
+      </div>
+    </div>
+  </div>
+</div>

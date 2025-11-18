@@ -1,0 +1,384 @@
+.formulario-container {
+  padding: 20px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.formulario-header {
+  margin-bottom: 25px;
+}
+
+.formulario-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.form-group input.error,
+.form-group textarea.error {
+  border-color: #f44336;
+}
+
+.error-message {
+  display: block;
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.contador-caracteres {
+  display: block;
+  text-align: right;
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
+.edad-calculada {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #e8f5e9;
+  border-radius: 6px;
+  border-left: 3px solid #4CAF50;
+}
+
+.edad-calculada span {
+  color: #2e7d32;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Foto INE Section */
+.foto-ine-section {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.foto-upload-container {
+  text-align: center;
+}
+
+.foto-preview {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+.foto-preview img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-eliminar-foto {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.btn-eliminar-foto:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
+}
+
+.upload-placeholder {
+  padding: 40px 20px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  background: white;
+}
+
+.upload-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.upload-placeholder p {
+  margin: 0;
+  color: #999;
+  font-size: 14px;
+}
+
+.btn-subir {
+  padding: 10px 20px;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-subir:hover {
+  background: #1976D2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.btn-cancelar,
+.btn-guardar {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancelar {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.btn-cancelar:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.btn-guardar {
+  background: #4CAF50;
+  color: white;
+}
+
+.btn-guardar:hover:not(:disabled) {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.btn-guardar:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Info Ayuda */
+.info-ayuda {
+  margin-top: 20px;
+  padding: 15px;
+  background: #e3f2fd;
+  border-left: 4px solid #2196F3;
+  border-radius: 6px;
+}
+
+.info-ayuda p {
+  margin: 0;
+  color: #1565C0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Scrollbar personalizada */
+.formulario-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.formulario-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.formulario-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.formulario-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .formulario-container {
+    padding: 15px;
+  }
+
+  .foto-preview img {
+    max-height: 200px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-cancelar,
+  .btn-guardar {
+    width: 100%;
+  }
+  .form-select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: white;
+  cursor: pointer;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.helper-text {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
+}
+/* Selector de rol para admin */
+.form-select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: white;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-select option {
+  padding: 10px;
+}
+
+.helper-text {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #667eea;
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Edad calculada con estilo mejorado */
+.edad-calculada {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background: linear-gradient(135deg, #fff9e6 0%, #ffe082 100%);
+  border-radius: 8px;
+  border: 2px solid #ffc107;
+}
+
+.edad-calculada span {
+  color: #f57c00;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.edad-calculada strong {
+  font-size: 16px;
+  color: #e65100;
+}
+
+/* Mejorar apariencia de botones */
+.btn-guardar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-guardar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-guardar:disabled:hover {
+  background: #4CAF50;
+  box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-select {
+    font-size: 14px;
+  }
+  
+  .helper-text {
+    font-size: 12px;
+  }
+}
+}

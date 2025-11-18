@@ -1,0 +1,332 @@
+<!-- Header con información de usuario -->
+<div class="app-header">
+  <div class="header-content">
+    <div class="header-left">
+      <h1>🎂 Calendario de Cumpleaños</h1>
+      <p>Hotel HB - Sistema de Gestión</p>
+    </div>
+    
+    <div class="header-right">
+      <div class="user-info">
+        <span class="user-icon">👤</span>
+        <div class="user-details">
+          <span class="user-name">{{ authService.getNombreUsuario() }}</span>
+          <span class="user-role">{{ authService.getRolActual() }}</span>
+        </div>
+      </div>
+      <button class="btn btn-logout btn-light" (click)="cerrarSesion()">
+        🚪 Cerrar Sesión
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="calendario-container">
+  <div class="calendario-header">
+    <button 
+      class="btn btn-nav btn-primary" 
+      (click)="mesAnterior()"
+      [disabled]="!puedeRetroceder()">
+      <span>← Anterior</span>
+    </button>
+    
+    <div class="mes-anio">
+      <h2>
+        <span class="emoji-calendar" (click)="activarModoEditor()" title="Click para activar modo editor">📅</span>
+        {{ nombresMeses[mesActual] }} {{ anioActual }}
+      </h2>
+    </div>
+    
+    <button class="btn btn-nav btn-primary" (click)="mesSiguiente()">
+      <span>Siguiente →</span>
+    </button>
+  </div>
+
+  <div class="dias-semana">
+    <div class="dia-semana" *ngFor="let dia of diasSemana">{{ dia }}</div>
+  </div>
+
+  <div class="dias-grid">
+    <div 
+      *ngFor="let dia of diasCalendario"
+      class="dia-celda"
+      [class.mes-actual]="dia.esMesActual"
+      [class.hoy]="dia.esHoy"
+      [class.tiene-cumpleanos]="dia.tieneCumpleanos"
+      (click)="abrirModalDia(dia)">
+      
+      <span class="numero-dia">{{ dia.dia }}</span>
+      
+      <div class="indicador-cumpleanos" *ngIf="dia.tieneCumpleanos">
+        <span class="badge badge-warning">🎂 {{ dia.cumpleanos.length }}</span>
+      </div>
+
+      <div class="nombres-preview" *ngIf="dia.tieneCumpleanos && dia.cumpleanos.length > 0">
+        <span class="nombre-corto">{{ dia.cumpleanos[0].cliente.nombre }}</span>
+        <span *ngIf="dia.cumpleanos.length > 1" class="mas">+{{ dia.cumpleanos.length - 1 }}</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btn-agregar btn-success btn-lg" (click)="abrirFormulario()">
+    <span class="btn-icon">➕</span> Agregar Nuevo Cliente
+  </button>
+
+  <!-- Banner de cumpleaños de hoy -->
+  <div class="cumpleanos-hoy-simple" *ngIf="totalCumpleanosHoy > 0">
+    <div class="simple-content">
+      <div class="simple-left">
+        <span class="simple-icon">🎉</span>
+        <div class="simple-text">
+          <h3>¡Cumpleaños de Hoy!</h3>
+          <p>Hay {{ totalCumpleanosHoy }} {{ totalCumpleanosHoy === 1 ? 'persona cumpliendo años' : 'personas cumpliendo años' }}</p>
+        </div>
+      </div>
+      <button class="btn btn-primary" (click)="abrirModalCumpleanosHoy()">
+        Ver Detalles →
+      </button>
+    </div>
+  </div>
+
+  <!-- Barra de estadísticas -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <span class="stat-icon">👥</span>
+      <div class="stat-info">
+        <span class="stat-value">{{ clienteService.getClientesFiltrados().length }}</span>
+        <span class="stat-label">Clientes registrados</span>
+      </div>
+    </div>
+    
+    <div class="stat-card stat-editor" *ngIf="modoEditor">
+      <span class="stat-icon">✏️</span>
+      <div class="stat-info">
+        <span class="stat-value">EDITOR</span>
+        <span class="stat-label">Modo edición activo</span>
+      </div>
+      <button class="btn-desactivar-editor" (click)="desactivarModoEditor()" title="Cerrar modo editor">
+        ✖
+      </button>
+    </div>
+    
+    <div class="stat-card" *ngIf="authService.isAdmin()">
+      <span class="stat-icon">🔧</span>
+      <div class="stat-info">
+        <span class="stat-value">ADMIN</span>
+        <span class="stat-label">Administrador</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 1: Áreas del día seleccionado -->
+<div class="modal-overlay modal-nivel-1" *ngIf="modalDiaAbierto" (click)="cerrarModalDia()">
+  <div class="modal-content modal-areas fade-in" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>🎉 Cumpleaños del {{ diaSeleccionado?.dia }} de {{ nombresMeses[mesActual] }} {{ anioActual }}</h3>
+      <button class="btn-cerrar" (click)="cerrarModalDia()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="areas-grid">
+        <div class="area-card" *ngFor="let area of obtenerAreas()">
+          <div class="area-card-header">
+            <div class="area-icon-wrapper">
+              <span class="area-emoji">
+                {{ area === 'Administrador' ? '👔' : 
+                   area === 'Karina' ? '👩' : 
+                   area === 'Elisa' ? '👩‍🦰' : 
+                   area === 'Cesia' ? '👩‍🦱' : 
+                   area === 'Restaurante' ? '🍽️' : 
+                   area === 'Recepción' ? '🏨' : '👥' }}
+              </span>
+            </div>
+            <div class="area-info">
+              <h4>{{ area }}</h4>
+              <p class="area-count">{{ cumpleanosPorArea[area].length }} cumpleaños</p>
+            </div>
+          </div>
+          
+          <button class="btn-ver-detalles" (click)="abrirModalClientesArea(area)">
+            Ver Clientes →
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="obtenerAreas().length === 0" class="sin-cumpleanos">
+        <span class="emoji-grande">📅</span>
+        <p>No hay cumpleaños registrados para este día</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 2: Clientes del área seleccionada -->
+<div class="modal-overlay modal-nivel-2" *ngIf="modalClientesAreaAbierto" (click)="cerrarModalClientesArea()">
+  <div class="modal-content modal-clientes-area fade-in" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>👥 {{ areaSeleccionada }} - Lista de Cumpleañeros</h3>
+      <button class="btn-cerrar" (click)="cerrarModalClientesArea()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="clientes-grid">
+        <div class="cliente-mini-card" *ngFor="let item of obtenerClientesDeArea(areaSeleccionada!)">
+          <div class="cliente-mini-avatar">
+            {{ item.cliente.nombre.charAt(0) }}{{ item.cliente.apellidoPaterno.charAt(0) }}
+          </div>
+          
+          <div class="cliente-mini-info">
+            <h4>{{ item.cliente.nombre }} {{ item.cliente.apellidoPaterno }}</h4>
+            <p class="cliente-mini-edad">🎂 Cumple {{ item.edad }} años</p>
+          </div>
+
+          <button class="btn-ver-cumpleanero" (click)="abrirModalDetalleCumpleanero(item.cliente)">
+            Ver Perfil →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 3: Detalle del cumpleañero -->
+<div class="modal-overlay modal-nivel-3" *ngIf="modalDetalleCumpleaneroAbierto" (click)="cerrarModalDetalleCumpleanero()">
+  <div class="modal-content modal-cumpleanero fade-in" (click)="$event.stopPropagation()">
+    <div class="modal-header-cumpleanero">
+      <div class="header-cumpleanero-content">
+        <div class="avatar-cumpleanero-grande">
+          {{ clienteDetalle?.nombre?.charAt(0) }}{{ clienteDetalle?.apellidoPaterno?.charAt(0) }}
+        </div>
+        <div class="titulo-cumpleanero">
+          <h3>{{ clienteDetalle?.nombre }} {{ clienteDetalle?.apellidoPaterno }}</h3>
+          <p>{{ clienteDetalle?.apellidoMaterno }}</p>
+        </div>
+      </div>
+      <button class="btn-cerrar" (click)="cerrarModalDetalleCumpleanero()">×</button>
+    </div>
+
+    <div class="modal-body-cumpleanero" *ngIf="clienteDetalle">
+      <!-- Información principal -->
+      <div class="info-principal">
+        <div class="info-item">
+          <span class="info-icon">🎂</span>
+          <div class="info-content">
+            <span class="info-label">Edad</span>
+            <span class="info-value">{{ obtenerEdad(clienteDetalle.fechaNacimiento) }} años</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <span class="info-icon">📅</span>
+          <div class="info-content">
+            <span class="info-label">Fecha de Nacimiento</span>
+            <span class="info-value">{{ formatearFecha(clienteDetalle.fechaNacimiento) }}</span>
+          </div>
+        </div>
+
+        <div class="info-item" *ngIf="clienteDetalle.telefono">
+          <span class="info-icon">📱</span>
+          <div class="info-content">
+            <span class="info-label">Teléfono</span>
+            <span class="info-value">{{ formatearTelefono(clienteDetalle.telefono) }}</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <span class="info-icon">👤</span>
+          <div class="info-content">
+            <span class="info-label">Registrado por</span>
+            <span class="info-value">{{ obtenerNombreRol(clienteDetalle.creadoPor) }}</span>
+          </div>
+        </div>
+      </div>
+
+    <!-- Descripción -->
+    <div class="descripcion-cumpleanero" *ngIf="clienteDetalle.descripcion">
+    <h4>📝 Notas sobre {{ clienteDetalle.nombre }}</h4>
+    <p>{{ clienteDetalle.descripcion }}</p>
+    </div>
+
+    <!-- Si NO tiene descripción, mostrar mensaje -->
+    <div class="descripcion-cumpleanero sin-descripcion" *ngIf="!clienteDetalle.descripcion">
+    <h4>📝 Notas</h4>
+    <p class="text-muted">Sin información adicional registrada</p>
+    </div>
+
+      <!-- Botón de WhatsApp -->
+      <div class="whatsapp-cumpleanero" *ngIf="clienteDetalle.telefono">
+        <button class="btn-whatsapp-grande" (click)="enviarWhatsApp(clienteDetalle)">
+          <span class="whatsapp-icon-grande">💬</span>
+          <div class="whatsapp-texto">
+            <span class="whatsapp-titulo">Enviar Felicitación</span>
+            <span class="whatsapp-subtitulo">Mensaje personalizado por WhatsApp</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Botones de edición (solo modo editor) -->
+      <div class="acciones-cumpleanero" *ngIf="modoEditor">
+        <button class="btn btn-info btn-lg" (click)="editarCliente(clienteDetalle)">
+          ✏️ Editar
+        </button>
+        <button class="btn btn-danger btn-lg" (click)="eliminarCliente(clienteDetalle.id)">
+          🗑️ Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de cumpleaños de HOY (usa misma lógica de 3 niveles) -->
+<div class="modal-overlay modal-nivel-1" *ngIf="modalCumpleanosHoyAbierto" (click)="cerrarModalCumpleanosHoy()">
+  <div class="modal-content modal-areas fade-in" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>🎉 Cumpleaños de Hoy</h3>
+      <button class="btn-cerrar" (click)="cerrarModalCumpleanosHoy()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="areas-grid">
+        <div class="area-card" *ngFor="let area of obtenerAreasHoy()">
+          <div class="area-card-header">
+            <div class="area-icon-wrapper">
+              <span class="area-emoji">
+                {{ area === 'Administrador' ? '👔' : 
+                   area === 'Karina' ? '👩' : 
+                   area === 'Elisa' ? '👩‍🦰' : 
+                   area === 'Ceia' ? '👩‍🦱' : 
+                   area === 'Restaurante' ? '🍽️' : 
+                   area === 'Recepción' ? '🏨' : '👥' }}
+              </span>
+            </div>
+            <div class="area-info">
+              <h4>{{ area }}</h4>
+              <p class="area-count">{{ cumpleanosHoy[area].length }} cumpleaños</p>
+            </div>
+          </div>
+          
+          <button class="btn-ver-detalles" (click)="cerrarModalCumpleanosHoy(); cumpleanosPorArea = cumpleanosHoy; areaSeleccionada = area; modalClientesAreaAbierto = true;">
+            Ver Clientes →
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="obtenerAreasHoy().length === 0" class="sin-cumpleanos">
+        <span class="emoji-grande">📅</span>
+        <p>No hay cumpleaños hoy</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de formulario -->
+<div class="modal-overlay modal-nivel-4" *ngIf="formularioAbierto" (click)="cerrarFormulario()">
+  <div class="modal-content modal-formulario fade-in" (click)="$event.stopPropagation()">
+    <app-agregar-cliente 
+      [clienteEditar]="clienteEditando"
+      (clienteGuardado)="onClienteGuardado()"
+      (cancelar)="cerrarFormulario()">
+    </app-agregar-cliente>
+  </div>
+</div>
