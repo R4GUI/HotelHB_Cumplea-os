@@ -1,83 +1,164 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-export interface Usuario {
+interface User {
   username: string;
-  password: string;
   rol: string;
-  nombre: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private usuarioActual: Usuario | null = null;
-
-  private usuarios: Usuario[] = [
-    { username: 'admin', password: 'hotelhb', rol: 'admin', nombre: 'Administrador' },
-    { username: 'karina', password: 'hotelhb', rol: 'karina', nombre: 'Karina' },
-    { username: 'elisa', password: 'hotelhb', rol: 'elisa', nombre: 'Elisa' },
-    { username: 'cesia', password: 'hotelhb', rol: 'cesia', nombre: 'Cesia' },
-    { username: 'restaurante', password: 'hotelhb', rol: 'restaurante', nombre: 'Restaurante' },
-    { username: 'recepcion', password: 'hotelhb', rol: 'recepcion', nombre: 'Recepción' }
-  ];
+  private currentUser: User | null = null;
+  private readonly STORAGE_KEY = 'currentUser';
+  private readonly TIMEOUT_KEY = 'lastActivity';
+  private readonly INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutos en milisegundos
+  private inactivityTimer: any;
 
   constructor(private router: Router) {
-    this.cargarSesion();
+    this.loadUserFromStorage();
+    this.startInactivityMonitor();
   }
 
-  private cargarSesion(): void {
-    const sesionGuardada = localStorage.getItem('usuario');
-    if (sesionGuardada) {
-      this.usuarioActual = JSON.parse(sesionGuardada);
+  private loadUserFromStorage(): void {
+    const userJson = localStorage.getItem(this.STORAGE_KEY);
+    if (userJson) {
+      this.currentUser = JSON.parse(userJson);
+      this.checkInactivity();
     }
+  }
+
+  private startInactivityMonitor(): void {
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+    
+    events.forEach(event => {
+      document.addEventListener(event, () => {
+        this.resetInactivityTimer();
+      }, true);
+    });
+
+    this.resetInactivityTimer();
+  }
+
+  private resetInactivityTimer(): void {
+    if (this.currentUser) {
+      localStorage.setItem(this.TIMEOUT_KEY, Date.now().toString());
+      
+      if (this.inactivityTimer) {
+        clearTimeout(this.inactivityTimer);
+      }
+
+      this.inactivityTimer = setTimeout(() => {
+        this.autoLogout();
+      }, this.INACTIVITY_TIMEOUT);
+    }
+  }
+
+  private checkInactivity(): void {
+    const lastActivity = localStorage.getItem(this.TIMEOUT_KEY);
+    
+    if (lastActivity) {
+      const timeSinceLastActivity = Date.now() - parseInt(lastActivity);
+      
+      if (timeSinceLastActivity > this.INACTIVITY_TIMEOUT) {
+        console.log('⏰ Sesión expirada por inactividad');
+        this.autoLogout();
+      } else {
+        const timeRemaining = this.INACTIVITY_TIMEOUT - timeSinceLastActivity;
+        this.inactivityTimer = setTimeout(() => {
+          this.autoLogout();
+        }, timeRemaining);
+      }
+    }
+  }
+
+  private autoLogout(): void {
+    console.log('🚪 Cerrando sesión por inactividad...');
+    this.logout();
+    alert('Tu sesión ha expirado por inactividad. Por favor, inicia sesión nuevamente.');
   }
 
   login(username: string, password: string): boolean {
-    const usuario = this.usuarios.find(
-      u => u.username === username && u.password === password
-    );
+    // ⬇️ ACTUALIZADO: Todas las contraseñas son "hotelhb"
+    const users: { [key: string]: { password: string; rol: string } } = {
+      'admin': { password: 'hotelhb', rol: 'admin' },
+      'karina': { password: 'hotelhb', rol: 'karina' },
+      'elisa': { password: 'hotelhb', rol: 'elisa' },
+      'cesia': { password: 'hotelhb', rol: 'cesia' },
+      'restaurante': { password: 'hotelhb', rol: 'restaurante' },
+      'recepcion': { password: 'hotelhb', rol: 'recepcion' }
+    };
 
-    if (usuario) {
-      this.usuarioActual = usuario;
-      localStorage.setItem('usuario', JSON.stringify(usuario));
+    const user = users[username.toLowerCase()];
+    
+    if (user && user.password === password) {
+      this.currentUser = {
+        username: username.toLowerCase(),
+        rol: user.rol
+      };
+      
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.currentUser));
+      localStorage.setItem(this.TIMEOUT_KEY, Date.now().toString());
+      this.resetInactivityTimer();
+      
+      console.log('✅ Login exitoso:', this.currentUser);
       return true;
     }
-
+    
     return false;
   }
 
   logout(): void {
-    this.usuarioActual = null;
-    localStorage.removeItem('usuario');
+    if (this.inactivityTimer) {
+      clearTimeout(this.inactivityTimer);
+    }
+    
+    this.currentUser = null;
+    localStorage.removeItem(this.STORAGE_KEY);
+    localStorage.removeItem(this.TIMEOUT_KEY);
+    this.router.navigate(['/login']);
+  }
+
+  getCurrentUser(): User | null {
+    return this.currentUser;
   }
 
   isAuthenticated(): boolean {
-    return this.usuarioActual !== null;
-  }
-
-  getCurrentUser(): Usuario | null {
-    return this.usuarioActual;
+    return this.currentUser !== null;
   }
 
   isAdmin(): boolean {
-    return this.usuarioActual?.rol === 'admin';
+    return this.currentUser?.rol === 'admin';
   }
 
   getNombreUsuario(): string {
-    return this.usuarioActual?.nombre || 'Usuario';
-  }
+    if (!this.currentUser) return 'Usuario';
 
-  getRolActual(): string {
-    const roles: { [key: string]: string } = {
-      'admin': 'Administrador',
+    const nombres: { [key: string]: string } = {
+      'admin': 'Gerencia', // ⬇️ CAMBIADO: De "Administrador" a "Gerencia"
       'karina': 'Karina',
       'elisa': 'Elisa',
       'cesia': 'Cesia',
       'restaurante': 'Restaurante',
       'recepcion': 'Recepción'
     };
-    return roles[this.usuarioActual?.rol || ''] || 'Usuario';
+
+    return nombres[this.currentUser.username] || this.currentUser.username;
+  }
+
+  getRolActual(): string {
+    if (!this.currentUser) return '';
+
+    const roles: { [key: string]: string } = {
+      'admin': 'Gerencia General', // ⬇️ CAMBIADO: De "Administrador" a "Gerencia General"
+      'karina': 'Vendedora',
+      'elisa': 'Vendedora',
+      'cesia': 'Vendedora',
+      'restaurante': 'Área de Restaurante',
+      'recepcion': 'Área de Recepción'
+    };
+
+    return roles[this.currentUser.username] || this.currentUser.rol;
   }
 }
