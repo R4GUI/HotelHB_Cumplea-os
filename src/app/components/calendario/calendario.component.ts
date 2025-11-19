@@ -25,12 +25,15 @@ export class CalendarioComponent implements OnInit, OnDestroy {
   modalClientesAreaAbierto = false;
   modalDetalleCumpleaneroAbierto = false;
   formularioAbierto = false;
+  modalCerrarSesionAbierto = false;
+  modalEliminarAbierto = false;
   
   // Datos seleccionados
   diaSeleccionado: DiaCalendario | null = null;
   areaSeleccionada: string | null = null;
   clienteDetalle: Cliente | null = null;
   clienteEditando: Cliente | null = null;
+  clienteAEliminar: Cliente | null = null;
   
   // Cumpleaños agrupados
   cumpleanosPorArea: { [area: string]: { cliente: Cliente; edad: number }[] } = {};
@@ -155,7 +158,6 @@ _Hotel HB_ 🏨❤️`
     const edad = this.obtenerEdad(cliente.fechaNacimiento);
     
     const mensajes = [
-      // Mensaje 1 - Cálido y familiar
       `*FELIZ CUMPLEAÑOS ${cliente.nombre.toUpperCase()}*%0A%0A` +
       `Hoy es un dia muy especial porque celebramos tus *${edad} años* de vida.%0A%0A` +
       `Queremos que sepas que eres una persona muy importante para nosotros y apreciamos profundamente tu confianza y preferencia.%0A%0A` +
@@ -169,7 +171,6 @@ _Hotel HB_ 🏨❤️`
       `Disfruta tu dia al maximo, te lo mereces!%0A%0A` +
       `_Con cariño y los mejores deseos,%0A${nombreRemitente}%0AHotel HB_`,
 
-      // Mensaje 2 - Profesional y emotivo
       `*FELICIDADES EN TU CUMPLEAÑOS, ${cliente.nombre.toUpperCase()}*%0A%0A` +
       `En este dia tan especial, queremos enviarte nuestros mas sinceros y calurosos deseos de felicidad.%0A%0A` +
       `Cumples *${edad} años* y cada uno de ellos representa experiencias vividas, aprendizajes valiosos y momentos unicos que te han convertido en la persona especial que eres hoy.%0A%0A` +
@@ -183,7 +184,6 @@ _Hotel HB_ 🏨❤️`
       `Gracias por confiar en nosotros y permitirnos ser parte de tu historia.%0A%0A` +
       `_Con mucho aprecio y admiracion,%0A${nombreRemitente}%0AHotel HB_`,
 
-      // Mensaje 3 - Cercano y afectuoso
       `*MUCHAS FELICIDADES ${cliente.nombre.toUpperCase()}*%0A%0A` +
       `Hoy celebramos contigo un año mas de vida, y queremos que este mensaje llegue directamente a tu corazon, cargado de los mejores deseos.%0A%0A` +
       `En tus *${edad} años* has demostrado ser una persona excepcional, y nos sentimos muy afortunados de que formes parte de nuestra gran familia en Hotel HB.%0A%0A` +
@@ -199,14 +199,9 @@ _Hotel HB_ 🏨❤️`
       `_Con todo nuestro cariño,%0A${nombreRemitente}%0AHotel HB_`
     ];
 
-    // Seleccionar mensaje aleatorio
     const mensajeSeleccionado = mensajes[Math.floor(Math.random() * mensajes.length)];
-
-    // Crear URL de WhatsApp
     const telefono = cliente.telefono.replace(/\D/g, '');
     const url = `https://wa.me/52${telefono}?text=${mensajeSeleccionado}`;
-
-    // Abrir WhatsApp
     window.open(url, '_blank');
   }
 
@@ -272,68 +267,37 @@ _Hotel HB_ 🏨❤️`
     }
   }
 
-  // obtenerCumpleanosHoy(): void {
-  //   const hoy = new Date();
-  //   const dia = hoy.getDate();
-  //   const mes = hoy.getMonth();
-
-  //   const clientesFiltrados = this.clienteService.getClientesFiltrados();
-    
-  //   const clientesHoy = clientesFiltrados.filter(cliente => {
-  //     const fecha = new Date(cliente.fechaNacimiento);
-  //     return fecha.getUTCDate() === dia && fecha.getUTCMonth() === mes;
-  //   });
-
-  //   this.cumpleanosHoy = {};
-  //   this.totalCumpleanosHoy = 0;
-
-  //   clientesHoy.forEach(cliente => {
-  //     const area = this.obtenerNombreRol(cliente.creadoPor);
-      
-  //     if (!this.cumpleanosHoy[area]) {
-  //       this.cumpleanosHoy[area] = [];
-  //     }
-
-  //     const edad = this.clienteService.calcularEdad(cliente.fechaNacimiento);
-  //     this.cumpleanosHoy[area].push({ cliente, edad });
-  //     this.totalCumpleanosHoy++;
-  //   });
-  // }
   obtenerCumpleanosHoy(): void {
-  const hoy = new Date();
-  const dia = hoy.getDate();
-  const mes = hoy.getMonth();
+    const hoy = new Date();
+    const dia = hoy.getDate();
+    const mes = hoy.getMonth();
 
-  // ⬇️ CAMBIO: Ahora obtenemos TODOS los clientes
-  const todosLosClientes = this.clienteService.getClientesFiltrados();
-  
-  const clientesHoy = todosLosClientes.filter(cliente => {
-    const fecha = new Date(cliente.fechaNacimiento);
-    return fecha.getUTCDate() === dia && fecha.getUTCMonth() === mes;
-  });
-
-  this.cumpleanosHoy = {};
-  
-  // ⬇️ NUEVO: Solo contamos los de NUESTRA área para la notificación
-  const user = this.authService.getCurrentUser();
-  this.totalCumpleanosHoy = 0;
-
-  clientesHoy.forEach(cliente => {
-    const area = this.obtenerNombreRol(cliente.creadoPor);
+    const todosLosClientes = this.clienteService.getClientesFiltrados();
     
-    if (!this.cumpleanosHoy[area]) {
-      this.cumpleanosHoy[area] = [];
-    }
+    const clientesHoy = todosLosClientes.filter(cliente => {
+      const fecha = new Date(cliente.fechaNacimiento);
+      return fecha.getUTCDate() === dia && fecha.getUTCMonth() === mes;
+    });
 
-    const edad = this.clienteService.calcularEdad(cliente.fechaNacimiento);
-    this.cumpleanosHoy[area].push({ cliente, edad });
-    
-    // ⬇️ Solo sumamos al contador si es de NUESTRA área (o si somos admin)
-    if (user?.rol === 'admin' || cliente.creadoPor === user?.username) {
-      this.totalCumpleanosHoy++;
-    }
-  });
-}
+    this.cumpleanosHoy = {};
+    const user = this.authService.getCurrentUser();
+    this.totalCumpleanosHoy = 0;
+
+    clientesHoy.forEach(cliente => {
+      const area = this.obtenerNombreRol(cliente.creadoPor);
+      
+      if (!this.cumpleanosHoy[area]) {
+        this.cumpleanosHoy[area] = [];
+      }
+
+      const edad = this.clienteService.calcularEdad(cliente.fechaNacimiento);
+      this.cumpleanosHoy[area].push({ cliente, edad });
+      
+      if (user?.rol === 'admin' || cliente.creadoPor === user?.username) {
+        this.totalCumpleanosHoy++;
+      }
+    });
+  }
 
   mesAnterior(): void {
     if (this.mesActual === 0) {
@@ -361,12 +325,10 @@ _Hotel HB_ 🏨❤️`
     return this.anioActual > this.anioMinimo || this.mesActual > 0;
   }
 
-  // MODAL 1: Click en día del calendario
   abrirModalDia(dia: DiaCalendario): void {
     if (dia.tieneCumpleanos) {
       this.diaSeleccionado = dia;
       
-      // Agrupar por área
       this.cumpleanosPorArea = {};
       dia.cumpleanos.forEach(cumple => {
         const area = this.obtenerNombreRol(cumple.cliente.creadoPor);
@@ -393,7 +355,6 @@ _Hotel HB_ 🏨❤️`
     return Object.keys(this.cumpleanosPorArea);
   }
 
-  // MODAL 2: Ver clientes de un área
   abrirModalClientesArea(area: string): void {
     this.areaSeleccionada = area;
     this.modalClientesAreaAbierto = true;
@@ -408,7 +369,6 @@ _Hotel HB_ 🏨❤️`
     return this.cumpleanosPorArea[area] || [];
   }
 
-  // MODAL 3: Ver detalle del cumpleañero
   abrirModalDetalleCumpleanero(cliente: Cliente): void {
     this.clienteDetalle = cliente;
     this.modalDetalleCumpleaneroAbierto = true;
@@ -419,7 +379,6 @@ _Hotel HB_ 🏨❤️`
     this.clienteDetalle = null;
   }
 
-  // Cumpleaños de hoy
   abrirModalCumpleanosHoy(): void {
     this.modalCumpleanosHoyAbierto = true;
   }
@@ -436,7 +395,6 @@ _Hotel HB_ 🏨❤️`
     return this.cumpleanosHoy[area] || [];
   }
 
-  // Formulario
   abrirFormulario(): void {
     this.clienteEditando = null;
     this.formularioAbierto = true;
@@ -456,16 +414,28 @@ _Hotel HB_ 🏨❤️`
     this.formularioAbierto = true;
   }
 
-  async eliminarCliente(id: string): Promise<void> {
-    if (confirm('¿Estás seguro de eliminar este cliente?')) {
-      try {
-        await this.clienteService.eliminarCliente(id);
-        this.cerrarModalDetalleCumpleanero();
-        this.cerrarModalClientesArea();
-        this.cerrarModalDia();
-      } catch (error) {
-        alert('Error al eliminar el cliente');
-      }
+  abrirModalEliminar(cliente: Cliente): void {
+    this.clienteAEliminar = cliente;
+    this.modalEliminarAbierto = true;
+  }
+
+  cancelarEliminar(): void {
+    this.modalEliminarAbierto = false;
+    this.clienteAEliminar = null;
+  }
+
+  async confirmarEliminar(): Promise<void> {
+    if (!this.clienteAEliminar) return;
+
+    try {
+      await this.clienteService.eliminarCliente(this.clienteAEliminar.id);
+      this.modalEliminarAbierto = false;
+      this.clienteAEliminar = null;
+      this.cerrarModalDetalleCumpleanero();
+      this.cerrarModalClientesArea();
+      this.cerrarModalDia();
+    } catch (error) {
+      alert('Error al eliminar el cliente');
     }
   }
 
@@ -473,11 +443,18 @@ _Hotel HB_ 🏨❤️`
     this.cerrarFormulario();
   }
 
-  cerrarSesion(): void {
-    if (confirm('¿Deseas cerrar sesión?')) {
-      this.authService.logout();
-      this.router.navigate(['/login']);
-    }
+  abrirModalCerrarSesion(): void {
+    this.modalCerrarSesionAbierto = true;
+  }
+
+  cancelarCerrarSesion(): void {
+    this.modalCerrarSesionAbierto = false;
+  }
+
+  confirmarCerrarSesion(): void {
+    this.modalCerrarSesionAbierto = false;
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   activarModoEditor(): void {

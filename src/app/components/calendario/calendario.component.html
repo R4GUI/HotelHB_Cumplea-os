@@ -14,7 +14,7 @@
           <span class="user-role">{{ authService.getRolActual() }}</span>
         </div>
       </div>
-      <button class="btn btn-logout btn-light" (click)="cerrarSesion()">
+      <button class="btn btn-logout btn-light" (click)="abrirModalCerrarSesion()">
         🚪 Cerrar Sesión
       </button>
     </div>
@@ -179,7 +179,6 @@
           <div class="cliente-mini-info">
             <h4>{{ item.cliente.nombre }} {{ item.cliente.apellidoPaterno }}</h4>
             <p class="cliente-mini-edad">🎂 Cumple {{ item.edad }} años</p>
-            <!-- ⬇️ NUEVO: Mostrar empresa si existe -->
             <p class="cliente-mini-empresa" *ngIf="item.cliente.empresa">
               🏢 {{ item.cliente.empresa }}
             </p>
@@ -237,7 +236,6 @@
           </div>
         </div>
 
-        <!-- ⬇️ NUEVO: Mostrar empresa si existe -->
         <div class="info-item" *ngIf="clienteDetalle.empresa">
           <span class="info-icon">🏢</span>
           <div class="info-content">
@@ -283,7 +281,7 @@
         <button class="btn btn-info btn-lg" (click)="editarCliente(clienteDetalle)">
           ✏️ Editar
         </button>
-        <button class="btn btn-danger btn-lg" (click)="eliminarCliente(clienteDetalle.id)">
+        <button class="btn btn-danger btn-lg" (click)="abrirModalEliminar(clienteDetalle)">
           🗑️ Eliminar
         </button>
       </div>
@@ -341,5 +339,64 @@
       (clienteGuardado)="onClienteGuardado()"
       (cancelar)="cerrarFormulario()">
     </app-agregar-cliente>
+  </div>
+</div>
+
+<!-- Modal de Cerrar Sesión -->
+<div class="modal-overlay modal-nivel-5" *ngIf="modalCerrarSesionAbierto" (click)="cancelarCerrarSesion()">
+  <div class="modal-content modal-cerrar-sesion fade-in" (click)="$event.stopPropagation()">
+    <div class="modal-header-cerrar">
+      <span class="icono-cerrar-sesion">🚪</span>
+      <h3>¿Cerrar Sesión?</h3>
+    </div>
+
+    <div class="modal-body-cerrar">
+      <p>¿Estás seguro que deseas cerrar tu sesión?</p>
+      <p class="usuario-actual">
+        <strong>{{ authService.getNombreUsuario() }}</strong>
+      </p>
+    </div>
+
+    <div class="modal-footer-cerrar">
+      <button class="btn-cancelar-cerrar" (click)="cancelarCerrarSesion()">
+        ❌ Cancelar
+      </button>
+      <button class="btn-confirmar-cerrar" (click)="confirmarCerrarSesion()">
+        ✅ Sí, Cerrar Sesión
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Eliminar Cliente -->
+<div class="modal-overlay modal-nivel-6" *ngIf="modalEliminarAbierto" (click)="cancelarEliminar()">
+  <div class="modal-content modal-eliminar fade-in" (click)="$event.stopPropagation()">
+    <div class="modal-header-eliminar">
+      <span class="icono-eliminar">⚠️</span>
+      <h3>¿Eliminar Cliente?</h3>
+    </div>
+
+    <div class="modal-body-eliminar" *ngIf="clienteAEliminar">
+      <p>¿Estás seguro que deseas eliminar a este cliente?</p>
+      <div class="cliente-eliminar-info">
+        <div class="avatar-eliminar">
+          {{ clienteAEliminar.nombre.charAt(0) }}{{ clienteAEliminar.apellidoPaterno.charAt(0) }}
+        </div>
+        <div class="nombre-eliminar">
+          <strong>{{ clienteAEliminar.nombre }} {{ clienteAEliminar.apellidoPaterno }}</strong>
+          <p>{{ clienteAEliminar.apellidoMaterno }}</p>
+        </div>
+      </div>
+      <p class="advertencia">⚠️ Esta acción no se puede deshacer</p>
+    </div>
+
+    <div class="modal-footer-eliminar">
+      <button class="btn-cancelar-eliminar" (click)="cancelarEliminar()">
+        ❌ Cancelar
+      </button>
+      <button class="btn-confirmar-eliminar" (click)="confirmarEliminar()">
+        🗑️ Sí, Eliminar
+      </button>
+    </div>
   </div>
 </div>
