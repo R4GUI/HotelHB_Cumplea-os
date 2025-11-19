@@ -83,6 +83,10 @@ export class ClienteService {
     if (cliente.telefono && cliente.telefono.trim()) {
       clienteData.telefono = cliente.telefono.trim();
     }
+
+    if (cliente.empresa && cliente.empresa.trim()) {
+      clienteData.empresa = cliente.empresa.trim();
+    }
     
     if (cliente.descripcion && cliente.descripcion.trim()) {
       clienteData.descripcion = cliente.descripcion.trim();
@@ -130,6 +134,9 @@ export class ClienteService {
     if (clienteActualizado.telefono) {
       updateData.telefono = clienteActualizado.telefono;
     }
+    if (clienteActualizado.empresa !== undefined) {
+      updateData.empresa = clienteActualizado.empresa;
+    }
     if (clienteActualizado.descripcion) {
       updateData.descripcion = clienteActualizado.descripcion;
     }
@@ -142,7 +149,15 @@ export class ClienteService {
     await deleteDoc(clienteDoc);
   }
 
+  // ⬇️ NUEVO: Ahora TODOS ven TODOS los clientes en el calendario
   getClientesFiltrados(): Cliente[] {
+    const todosLosClientes = this.clientesSubject.value;
+    console.log('📊 Total clientes visibles para TODOS:', todosLosClientes.length);
+    return todosLosClientes; // ⬅️ TODOS VEN TODOS
+  }
+
+  // ⬇️ NUEVO: Método para obtener solo los clientes que el usuario puede EDITAR
+  getClientesEditables(): Cliente[] {
     const user = this.authService.getCurrentUser();
     if (!user) {
       console.log('⚠️ No hay usuario autenticado');
@@ -150,21 +165,47 @@ export class ClienteService {
     }
 
     const todosLosClientes = this.clientesSubject.value;
-    console.log('📊 Total clientes en Firebase:', todosLosClientes.length);
-    console.log('👤 Usuario actual:', user.username, '| Rol:', user.rol);
 
     if (user.rol === 'admin') {
-      console.log('✅ Admin ve TODOS:', todosLosClientes.length);
+      console.log('✅ Admin puede editar TODOS:', todosLosClientes.length);
       return todosLosClientes;
     }
 
-    const clientesFiltrados = todosLosClientes.filter(c => {
+    const clientesEditables = todosLosClientes.filter(c => {
       const match = c.creadoPor === user.username;
       return match;
     });
     
-    console.log('✅ Clientes filtrados para', user.username, ':', clientesFiltrados.length);
-    return clientesFiltrados;
+    console.log('✅ Clientes editables para', user.username, ':', clientesEditables.length);
+    return clientesEditables;
+  }
+
+  // ⬇️ NUEVO: Contar cumpleaños DEL DÍA solo de MI área
+  getCumpleanosDelDiaPropio(): number {
+    const user = this.authService.getCurrentUser();
+    if (!user) return 0;
+
+    const hoy = new Date();
+    const dia = hoy.getDate();
+    const mes = hoy.getMonth();
+
+    const todosLosClientes = this.clientesSubject.value;
+    
+    // Si es admin, cuenta TODOS
+    if (user.rol === 'admin') {
+      return todosLosClientes.filter(cliente => {
+        const fecha = new Date(cliente.fechaNacimiento);
+        return fecha.getUTCDate() === dia && fecha.getUTCMonth() === mes;
+      }).length;
+    }
+
+    // Si NO es admin, solo cuenta los de SU área
+    return todosLosClientes.filter(cliente => {
+      const fecha = new Date(cliente.fechaNacimiento);
+      return fecha.getUTCDate() === dia && 
+             fecha.getUTCMonth() === mes &&
+             cliente.creadoPor === user.username;
+    }).length;
   }
 
   buscarClientes(termino: string): Cliente[] {
@@ -177,12 +218,13 @@ export class ClienteService {
       cliente.nombre.toLowerCase().includes(terminoLower) ||
       cliente.apellidoPaterno.toLowerCase().includes(terminoLower) ||
       cliente.apellidoMaterno.toLowerCase().includes(terminoLower) ||
-      cliente.telefono?.toLowerCase().includes(terminoLower)
+      cliente.telefono?.toLowerCase().includes(terminoLower) ||
+      cliente.empresa?.toLowerCase().includes(terminoLower)
     );
   }
 
   obtenerCumpleanosPorDia(dia: number, mes: number, anio: number): CumpleanosDelDia[] {
-    const clientesFiltrados = this.getClientesFiltrados();
+    const clientesFiltrados = this.getClientesFiltrados(); // ⬅️ Ahora son TODOS
     
     const clientes = clientesFiltrados.filter(cliente => {
       const fecha = new Date(cliente.fechaNacimiento);
@@ -223,9 +265,7 @@ export class ClienteService {
   }
 
   obtenerEstadisticas(): Estadisticas {
-    const clientes = this.authService.isAdmin() 
-      ? this.clientesSubject.value 
-      : this.getClientesFiltrados();
+    const clientes = this.clientesSubject.value; // ⬅️ Ahora TODOS ven todas las estadísticas
 
     const clientesPorMes: { [key: number]: number } = {};
     const clientesPorRol: { [key: string]: number } = {};
@@ -238,10 +278,8 @@ export class ClienteService {
       const mes = new Date(cliente.fechaNacimiento).getUTCMonth();
       clientesPorMes[mes]++;
 
-      if (this.authService.isAdmin()) {
-        const rol = cliente.rol || 'desconocido';
-        clientesPorRol[rol] = (clientesPorRol[rol] || 0) + 1;
-      }
+      const rol = cliente.rol || 'desconocido';
+      clientesPorRol[rol] = (clientesPorRol[rol] || 0) + 1;
     });
 
     return {

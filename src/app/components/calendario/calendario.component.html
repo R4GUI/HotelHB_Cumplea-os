@@ -179,6 +179,10 @@
           <div class="cliente-mini-info">
             <h4>{{ item.cliente.nombre }} {{ item.cliente.apellidoPaterno }}</h4>
             <p class="cliente-mini-edad">🎂 Cumple {{ item.edad }} años</p>
+            <!-- ⬇️ NUEVO: Mostrar empresa si existe -->
+            <p class="cliente-mini-empresa" *ngIf="item.cliente.empresa">
+              🏢 {{ item.cliente.empresa }}
+            </p>
           </div>
 
           <button class="btn-ver-cumpleanero" (click)="abrirModalDetalleCumpleanero(item.cliente)">
@@ -233,6 +237,15 @@
           </div>
         </div>
 
+        <!-- ⬇️ NUEVO: Mostrar empresa si existe -->
+        <div class="info-item" *ngIf="clienteDetalle.empresa">
+          <span class="info-icon">🏢</span>
+          <div class="info-content">
+            <span class="info-label">Empresa</span>
+            <span class="info-value">{{ clienteDetalle.empresa }}</span>
+          </div>
+        </div>
+
         <div class="info-item">
           <span class="info-icon">👤</span>
           <div class="info-content">
@@ -242,17 +255,17 @@
         </div>
       </div>
 
-    <!-- Descripción -->
-    <div class="descripcion-cumpleanero" *ngIf="clienteDetalle.descripcion">
-    <h4>📝 Notas sobre {{ clienteDetalle.nombre }}</h4>
-    <p>{{ clienteDetalle.descripcion }}</p>
-    </div>
+      <!-- Descripción -->
+      <div class="descripcion-cumpleanero" *ngIf="clienteDetalle.descripcion">
+        <h4>📝 Notas sobre {{ clienteDetalle.nombre }}</h4>
+        <p>{{ clienteDetalle.descripcion }}</p>
+      </div>
 
-    <!-- Si NO tiene descripción, mostrar mensaje -->
-    <div class="descripcion-cumpleanero sin-descripcion" *ngIf="!clienteDetalle.descripcion">
-    <h4>📝 Notas</h4>
-    <p class="text-muted">Sin información adicional registrada</p>
-    </div>
+      <!-- Si NO tiene descripción, mostrar mensaje -->
+      <div class="descripcion-cumpleanero sin-descripcion" *ngIf="!clienteDetalle.descripcion">
+        <h4>📝 Notas</h4>
+        <p class="text-muted">Sin información adicional registrada</p>
+      </div>
 
       <!-- Botón de WhatsApp -->
       <div class="whatsapp-cumpleanero" *ngIf="clienteDetalle.telefono">
@@ -278,7 +291,7 @@
   </div>
 </div>
 
-<!-- Modal de cumpleaños de HOY (usa misma lógica de 3 niveles) -->
+<!-- Modal de cumpleaños de HOY -->
 <div class="modal-overlay modal-nivel-1" *ngIf="modalCumpleanosHoyAbierto" (click)="cerrarModalCumpleanosHoy()">
   <div class="modal-content modal-areas fade-in" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -295,7 +308,7 @@
                 {{ area === 'Administrador' ? '👔' : 
                    area === 'Karina' ? '👩' : 
                    area === 'Elisa' ? '👩‍🦰' : 
-                   area === 'Ceia' ? '👩‍🦱' : 
+                   area === 'Cesia' ? '👩‍🦱' : 
                    area === 'Restaurante' ? '🍽️' : 
                    area === 'Recepción' ? '🏨' : '👥' }}
               </span>

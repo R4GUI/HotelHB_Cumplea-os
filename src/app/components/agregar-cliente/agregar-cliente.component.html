@@ -80,6 +80,17 @@
       </div>
     </div>
 
+    <!-- NUEVO: Campo Empresa -->
+    <div class="form-group">
+      <label for="empresa">🏢 Empresa / Compañía</label>
+      <input 
+        type="text" 
+        id="empresa"
+        formControlName="empresa"
+        placeholder="Ej: Coca-Cola, PEMEX, Google, etc.">
+      <span class="helper-text">💡 Opcional - Registra de qué empresa proviene el cliente</span>
+    </div>
+
     <!-- Selector de quién registra (solo admin) -->
     <div class="form-group" *ngIf="esAdmin">
       <label for="registradoPor">🏢 Registrado por (Opcional - Solo Admin)</label>

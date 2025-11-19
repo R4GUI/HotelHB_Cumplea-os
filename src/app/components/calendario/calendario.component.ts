@@ -99,12 +99,12 @@ export class CalendarioComponent implements OnInit, OnDestroy {
     return telefono;
   }
 
-generarMensajeCumpleanos(cliente: Cliente, edad: number): string {
-  const user = this.authService.getCurrentUser();
-  const nombreRemitente = user ? this.obtenerNombreRol(user.username) : 'Hotel HB';
-  
-  const mensajes = [
-    `🎉✨ ¡Feliz Cumpleaños ${cliente.nombre}! ✨🎉
+  generarMensajeCumpleanos(cliente: Cliente, edad: number): string {
+    const user = this.authService.getCurrentUser();
+    const nombreRemitente = user ? this.obtenerNombreRol(user.username) : 'Hotel HB';
+    
+    const mensajes = [
+      `🎉✨ ¡Feliz Cumpleaños ${cliente.nombre}! ✨🎉
 
 Hoy celebramos tus ${edad} años de vida y queremos que sepas que eres muy especial para nosotros. 💖
 
@@ -115,8 +115,8 @@ Que este nuevo año esté lleno de alegrías, éxitos y momentos inolvidables. �
 Con cariño,
 *${nombreRemitente}*
 _Hotel HB_ 🏨`,
-    
-    `🎊 ¡${cliente.nombre}, hoy es tu día especial! 🎊
+      
+      `🎊 ¡${cliente.nombre}, hoy es tu día especial! 🎊
 
 Te deseamos un cumpleaños lleno de amor, felicidad y momentos maravillosos. 💝
 
@@ -127,8 +127,8 @@ Que tus ${edad} años sean el inicio de grandes aventuras y sueños cumplidos. �
 Con mucho cariño,
 *${nombreRemitente}*
 _Hotel HB_ 🌺`,
-    
-    `✨🎈 ¡Felicidades ${cliente.nombre}! 🎈✨
+      
+      `✨🎈 ¡Felicidades ${cliente.nombre}! 🎈✨
 
 En este día tan especial queremos celebrarte y agradecerte por ser parte de nuestra familia. 💙
 
@@ -139,76 +139,76 @@ Que tus ${edad} años estén llenos de sonrisas, salud y prosperidad. ⭐🎂
 Atentamente,
 *${nombreRemitente}*
 _Hotel HB_ 🏨❤️`
-  ];
-  
-  return mensajes[Math.floor(Math.random() * mensajes.length)];
-}
-
-enviarWhatsApp(cliente: Cliente): void {
-  if (!cliente.telefono) {
-    alert('Este cliente no tiene teléfono registrado');
-    return;
+    ];
+    
+    return mensajes[Math.floor(Math.random() * mensajes.length)];
   }
 
-  const user = this.authService.getCurrentUser();
-  const nombreRemitente = user ? this.obtenerNombreRol(user.username) : 'Hotel HB';
-  const edad = this.obtenerEdad(cliente.fechaNacimiento);
-  
-  const mensajes = [
-    // Mensaje 1 - Cálido y familiar
-    `*FELIZ CUMPLEAÑOS ${cliente.nombre.toUpperCase()}*%0A%0A` +
-    `Hoy es un dia muy especial porque celebramos tus *${edad} años* de vida.%0A%0A` +
-    `Queremos que sepas que eres una persona muy importante para nosotros y apreciamos profundamente tu confianza y preferencia.%0A%0A` +
-    `En este nuevo año que comienzas, te deseamos:%0A%0A` +
-    `*- Alegrias infinitas* que iluminen cada uno de tus dias%0A` +
-    `*- Exito* en cada proyecto que emprendas%0A` +
-    `*- Amor y compañia* de tus seres mas queridos%0A` +
-    `*- Momentos inolvidables* que atesores por siempre%0A` +
-    `*- Salud y prosperidad* en abundancia%0A%0A` +
-    `Que cada deseo que tengas se convierta en realidad y que este año este lleno de bendiciones.%0A%0A` +
-    `Disfruta tu dia al maximo, te lo mereces!%0A%0A` +
-    `_Con cariño y los mejores deseos,%0A${nombreRemitente}%0AHotel HB_`,
+  enviarWhatsApp(cliente: Cliente): void {
+    if (!cliente.telefono) {
+      alert('Este cliente no tiene teléfono registrado');
+      return;
+    }
 
-    // Mensaje 2 - Profesional y emotivo
-    `*FELICIDADES EN TU CUMPLEAÑOS, ${cliente.nombre.toUpperCase()}*%0A%0A` +
-    `En este dia tan especial, queremos enviarte nuestros mas sinceros y calurosos deseos de felicidad.%0A%0A` +
-    `Cumples *${edad} años* y cada uno de ellos representa experiencias vividas, aprendizajes valiosos y momentos unicos que te han convertido en la persona especial que eres hoy.%0A%0A` +
-    `De todo corazon, te deseamos que:%0A%0A` +
-    `*- Todos tus sueños* se materialicen y superen tus expectativas%0A` +
-    `*- Cada nuevo dia* sea mejor que el anterior%0A` +
-    `*- Las sorpresas* y alegrias toquen constantemente a tu puerta%0A` +
-    `*- La vida* te siga sonriendo con generosidad%0A` +
-    `*- Tu luz interior* brille cada vez con mas fuerza%0A%0A` +
-    `Que este nuevo ciclo sea el inicio de grandes aventuras, nuevas oportunidades y logros extraordinarios.%0A%0A` +
-    `Gracias por confiar en nosotros y permitirnos ser parte de tu historia.%0A%0A` +
-    `_Con mucho aprecio y admiracion,%0A${nombreRemitente}%0AHotel HB_`,
+    const user = this.authService.getCurrentUser();
+    const nombreRemitente = user ? this.obtenerNombreRol(user.username) : 'Hotel HB';
+    const edad = this.obtenerEdad(cliente.fechaNacimiento);
+    
+    const mensajes = [
+      // Mensaje 1 - Cálido y familiar
+      `*FELIZ CUMPLEAÑOS ${cliente.nombre.toUpperCase()}*%0A%0A` +
+      `Hoy es un dia muy especial porque celebramos tus *${edad} años* de vida.%0A%0A` +
+      `Queremos que sepas que eres una persona muy importante para nosotros y apreciamos profundamente tu confianza y preferencia.%0A%0A` +
+      `En este nuevo año que comienzas, te deseamos:%0A%0A` +
+      `*- Alegrias infinitas* que iluminen cada uno de tus dias%0A` +
+      `*- Exito* en cada proyecto que emprendas%0A` +
+      `*- Amor y compañia* de tus seres mas queridos%0A` +
+      `*- Momentos inolvidables* que atesores por siempre%0A` +
+      `*- Salud y prosperidad* en abundancia%0A%0A` +
+      `Que cada deseo que tengas se convierta en realidad y que este año este lleno de bendiciones.%0A%0A` +
+      `Disfruta tu dia al maximo, te lo mereces!%0A%0A` +
+      `_Con cariño y los mejores deseos,%0A${nombreRemitente}%0AHotel HB_`,
 
-    // Mensaje 3 - Cercano y afectuoso
-    `*MUCHAS FELICIDADES ${cliente.nombre.toUpperCase()}*%0A%0A` +
-    `Hoy celebramos contigo un año mas de vida, y queremos que este mensaje llegue directamente a tu corazon, cargado de los mejores deseos.%0A%0A` +
-    `En tus *${edad} años* has demostrado ser una persona excepcional, y nos sentimos muy afortunados de que formes parte de nuestra gran familia en Hotel HB.%0A%0A` +
-    `Nuestros sinceros deseos para ti en este nuevo año son:%0A%0A` +
-    `*- Felicidad plena* en cada momento que vivas%0A` +
-    `*- Amor genuino* que te acompañe siempre%0A` +
-    `*- Logros importantes* en todas tus metas%0A` +
-    `*- Salud inquebrantable* para ti y los tuyos%0A` +
-    `*- Paz interior* y sonrisas constantes%0A%0A` +
-    `Esperamos que este dia este lleno de celebracion, risas, abrazos sinceros y momentos magicos junto a las personas que mas amas.%0A%0A` +
-    `Te enviamos un abrazo enorme y toda nuestra energia positiva para que este nuevo ciclo sea absolutamente maravilloso.%0A%0A` +
-    `Que disfrutes mucho tu dia especial!%0A%0A` +
-    `_Con todo nuestro cariño,%0A${nombreRemitente}%0AHotel HB_`
-  ];
+      // Mensaje 2 - Profesional y emotivo
+      `*FELICIDADES EN TU CUMPLEAÑOS, ${cliente.nombre.toUpperCase()}*%0A%0A` +
+      `En este dia tan especial, queremos enviarte nuestros mas sinceros y calurosos deseos de felicidad.%0A%0A` +
+      `Cumples *${edad} años* y cada uno de ellos representa experiencias vividas, aprendizajes valiosos y momentos unicos que te han convertido en la persona especial que eres hoy.%0A%0A` +
+      `De todo corazon, te deseamos que:%0A%0A` +
+      `*- Todos tus sueños* se materialicen y superen tus expectativas%0A` +
+      `*- Cada nuevo dia* sea mejor que el anterior%0A` +
+      `*- Las sorpresas* y alegrias toquen constantemente a tu puerta%0A` +
+      `*- La vida* te siga sonriendo con generosidad%0A` +
+      `*- Tu luz interior* brille cada vez con mas fuerza%0A%0A` +
+      `Que este nuevo ciclo sea el inicio de grandes aventuras, nuevas oportunidades y logros extraordinarios.%0A%0A` +
+      `Gracias por confiar en nosotros y permitirnos ser parte de tu historia.%0A%0A` +
+      `_Con mucho aprecio y admiracion,%0A${nombreRemitente}%0AHotel HB_`,
 
-  // Seleccionar mensaje aleatorio
-  const mensajeSeleccionado = mensajes[Math.floor(Math.random() * mensajes.length)];
+      // Mensaje 3 - Cercano y afectuoso
+      `*MUCHAS FELICIDADES ${cliente.nombre.toUpperCase()}*%0A%0A` +
+      `Hoy celebramos contigo un año mas de vida, y queremos que este mensaje llegue directamente a tu corazon, cargado de los mejores deseos.%0A%0A` +
+      `En tus *${edad} años* has demostrado ser una persona excepcional, y nos sentimos muy afortunados de que formes parte de nuestra gran familia en Hotel HB.%0A%0A` +
+      `Nuestros sinceros deseos para ti en este nuevo año son:%0A%0A` +
+      `*- Felicidad plena* en cada momento que vivas%0A` +
+      `*- Amor genuino* que te acompañe siempre%0A` +
+      `*- Logros importantes* en todas tus metas%0A` +
+      `*- Salud inquebrantable* para ti y los tuyos%0A` +
+      `*- Paz interior* y sonrisas constantes%0A%0A` +
+      `Esperamos que este dia este lleno de celebracion, risas, abrazos sinceros y momentos magicos junto a las personas que mas amas.%0A%0A` +
+      `Te enviamos un abrazo enorme y toda nuestra energia positiva para que este nuevo ciclo sea absolutamente maravilloso.%0A%0A` +
+      `Que disfrutes mucho tu dia especial!%0A%0A` +
+      `_Con todo nuestro cariño,%0A${nombreRemitente}%0AHotel HB_`
+    ];
 
-  // Crear URL de WhatsApp
-  const telefono = cliente.telefono.replace(/\D/g, '');
-  const url = `https://wa.me/52${telefono}?text=${mensajeSeleccionado}`;
+    // Seleccionar mensaje aleatorio
+    const mensajeSeleccionado = mensajes[Math.floor(Math.random() * mensajes.length)];
 
-  // Abrir WhatsApp
-  window.open(url, '_blank');
-}
+    // Crear URL de WhatsApp
+    const telefono = cliente.telefono.replace(/\D/g, '');
+    const url = `https://wa.me/52${telefono}?text=${mensajeSeleccionado}`;
+
+    // Abrir WhatsApp
+    window.open(url, '_blank');
+  }
 
   generarCalendario(): void {
     const primerDia = new Date(this.anioActual, this.mesActual, 1);
@@ -272,33 +272,68 @@ enviarWhatsApp(cliente: Cliente): void {
     }
   }
 
-  obtenerCumpleanosHoy(): void {
-    const hoy = new Date();
-    const dia = hoy.getDate();
-    const mes = hoy.getMonth();
+  // obtenerCumpleanosHoy(): void {
+  //   const hoy = new Date();
+  //   const dia = hoy.getDate();
+  //   const mes = hoy.getMonth();
 
-    const clientesFiltrados = this.clienteService.getClientesFiltrados();
+  //   const clientesFiltrados = this.clienteService.getClientesFiltrados();
     
-    const clientesHoy = clientesFiltrados.filter(cliente => {
-      const fecha = new Date(cliente.fechaNacimiento);
-      return fecha.getUTCDate() === dia && fecha.getUTCMonth() === mes;
-    });
+  //   const clientesHoy = clientesFiltrados.filter(cliente => {
+  //     const fecha = new Date(cliente.fechaNacimiento);
+  //     return fecha.getUTCDate() === dia && fecha.getUTCMonth() === mes;
+  //   });
 
-    this.cumpleanosHoy = {};
-    this.totalCumpleanosHoy = 0;
+  //   this.cumpleanosHoy = {};
+  //   this.totalCumpleanosHoy = 0;
 
-    clientesHoy.forEach(cliente => {
-      const area = this.obtenerNombreRol(cliente.creadoPor);
+  //   clientesHoy.forEach(cliente => {
+  //     const area = this.obtenerNombreRol(cliente.creadoPor);
       
-      if (!this.cumpleanosHoy[area]) {
-        this.cumpleanosHoy[area] = [];
-      }
+  //     if (!this.cumpleanosHoy[area]) {
+  //       this.cumpleanosHoy[area] = [];
+  //     }
 
-      const edad = this.clienteService.calcularEdad(cliente.fechaNacimiento);
-      this.cumpleanosHoy[area].push({ cliente, edad });
+  //     const edad = this.clienteService.calcularEdad(cliente.fechaNacimiento);
+  //     this.cumpleanosHoy[area].push({ cliente, edad });
+  //     this.totalCumpleanosHoy++;
+  //   });
+  // }
+  obtenerCumpleanosHoy(): void {
+  const hoy = new Date();
+  const dia = hoy.getDate();
+  const mes = hoy.getMonth();
+
+  // ⬇️ CAMBIO: Ahora obtenemos TODOS los clientes
+  const todosLosClientes = this.clienteService.getClientesFiltrados();
+  
+  const clientesHoy = todosLosClientes.filter(cliente => {
+    const fecha = new Date(cliente.fechaNacimiento);
+    return fecha.getUTCDate() === dia && fecha.getUTCMonth() === mes;
+  });
+
+  this.cumpleanosHoy = {};
+  
+  // ⬇️ NUEVO: Solo contamos los de NUESTRA área para la notificación
+  const user = this.authService.getCurrentUser();
+  this.totalCumpleanosHoy = 0;
+
+  clientesHoy.forEach(cliente => {
+    const area = this.obtenerNombreRol(cliente.creadoPor);
+    
+    if (!this.cumpleanosHoy[area]) {
+      this.cumpleanosHoy[area] = [];
+    }
+
+    const edad = this.clienteService.calcularEdad(cliente.fechaNacimiento);
+    this.cumpleanosHoy[area].push({ cliente, edad });
+    
+    // ⬇️ Solo sumamos al contador si es de NUESTRA área (o si somos admin)
+    if (user?.rol === 'admin' || cliente.creadoPor === user?.username) {
       this.totalCumpleanosHoy++;
-    });
-  }
+    }
+  });
+}
 
   mesAnterior(): void {
     if (this.mesActual === 0) {

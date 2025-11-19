@@ -4,7 +4,8 @@ export interface Cliente {
   apellidoPaterno: string;
   apellidoMaterno: string;
   fechaNacimiento: Date;
-  telefono?: string; // NUEVO: en lugar de CURP
+  telefono?: string;
+  empresa?: string; // ⬅️ NUEVO CAMPO
   descripcion?: string;
   creadoPor: string;
   rol: string;

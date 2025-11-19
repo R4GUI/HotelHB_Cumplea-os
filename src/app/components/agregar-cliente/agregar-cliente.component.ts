@@ -53,6 +53,7 @@ export class AgregarClienteComponent implements OnInit {
       apellidoMaterno: [''],
       fechaNacimiento: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+      empresa: [''],
       descripcion: ['', Validators.maxLength(500)],
       registradoPor: ['']
     });
@@ -72,6 +73,7 @@ export class AgregarClienteComponent implements OnInit {
         apellidoMaterno: this.clienteEditar.apellidoMaterno || '',
         fechaNacimiento: fechaFormateada,
         telefono: this.clienteEditar.telefono || '',
+        empresa: this.clienteEditar.empresa || '',
         descripcion: this.clienteEditar.descripcion || ''
       });
 
@@ -116,6 +118,7 @@ export class AgregarClienteComponent implements OnInit {
         apellidoMaterno: this.formulario.value.apellidoMaterno?.trim() || '',
         fechaNacimiento: fechaNacimiento,
         telefono: this.formulario.value.telefono?.trim() || undefined,
+        empresa: this.formulario.value.empresa?.trim() || undefined,
         descripcion: this.formulario.value.descripcion?.trim() || undefined,
         registradoPorSeleccion: this.formulario.value.registradoPor || undefined
       };
